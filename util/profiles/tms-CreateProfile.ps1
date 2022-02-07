@@ -7,7 +7,7 @@
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 # AUTHOR: Mihai Filip
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
-# Dependencies: WinOS, script from https://github.com/voidthevillain/tms-diags/blob/main/util/custom-profiles/tms-CustomProfiles.ps1
+# Dependencies: WinOS, script from https://github.com/voidthevillain/tms-scripts/blob/main/util/profiles/tms-CustomProfiles.ps1
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 # USAGE: 
 # .\tms-CreateProfile.ps1 profileName
@@ -40,7 +40,7 @@ function New-ProfileScript {
   $path = "$($HOME)\Documents\WindowsPowerShell"
   $name = "tms-CustomProfiles.ps1"
 
-  $url = "https://raw.githubusercontent.com/voidthevillain/tms-diags/main/util/custom-profiles/tms-CustomProfiles.ps1"
+  $url = "https://raw.githubusercontent.com/voidthevillain/tms-scripts/main/util/profiles/tms-CustomProfiles.ps1"
 
   try {
     (curl $url).Content | Out-File -FilePath "$($path)\$($name)"
@@ -83,12 +83,12 @@ $profileScript = Get-ProfileScript
 if ($profileScript) {
   Write-Host -ForegroundColor Green "Profile script exists in $($HOME)\Documents\WindowsPowerShell."
 } else {
-  Write-Host 'Profile script does not exist. Downloading script from https://github.com/voidthevillain/tms-diags/blob/main/util/custom-profiles/tms-CustomProfiles.ps1'
+  Write-Host 'Profile script does not exist. Downloading script from https://github.com/voidthevillain/tms-scripts/blob/main/util/profiles/tms-CustomProfiles.ps1'
   $isCreated = New-ProfileScript
   if ($isCreated) {
     Write-Host -ForegroundColor Green "Successfully downloaded and installed script in $($HOME)\Documents\WindowsPowerShell."
   } else {
-    return Write-Host -ForegroundColor Red "Could not download or install script from https://github.com/voidthevillain/tms-diags/blob/main/util/custom-profiles/tms-CustomProfiles.ps1."
+    return Write-Host -ForegroundColor Red "Could not download or install script from https://github.com/voidthevillain/tms-scripts/blob/main/util/profiles/tms-CustomProfiles.ps1"
   }
 }
 
