@@ -12,6 +12,7 @@
 # USAGE: 
 # Connect-MsolService
 # Connect-MicrosoftTeams
+# cd PATH_TO_SCRIPT
 # .\tms-CannotFederateWithDomain.ps1 user@domain.com domain.com
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 # Back it up with https://aka.ms/TeamsFederationDiag
@@ -36,6 +37,14 @@ Write-Host '...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.'
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 # FUNCTIONS
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
+function Get-UserSipDomain {
+  param (
+    [string]$UserPrincipalName
+  )
+
+  return $UserPrincipalName.split('@')[1]
+}
+
 function Get-OfficeUserLicense {
   param (
     [string]$UserPrincipalName
@@ -63,6 +72,20 @@ function Get-OfficeUserLicense {
   $licenses.ServicePlans = $ServicePlans
 
   return $licenses
+}
+
+function Get-TenantAssignedPlans {
+  param (
+    $APS
+  )
+
+  $tAPS = @()
+
+  foreach ($ap in $APS) {
+    $tAPS += ($ap.Capability | Out-String).trim()
+  }
+
+  return $tAPS
 }
 
 function Get-TenantFederationConfig {
@@ -197,6 +220,30 @@ function Get-ExternalAccessPolicyName {
 }
 
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
+# TENANT
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
+$tenant = (Get-CsTenant)
+
+Write-Host 'Checking if the tenant exists:'
+if ($tenant) {
+  Write-Host -ForegroundColor Green 'The tenant exists.'
+} else {
+  return Write-Host -ForegroundColor Red 'The tenant does not exist.'
+}
+
+# TENANT TEAMS PLAN
+$tenantAssignedPlans = (Get-CsTenant).AssignedPlan
+
+Write-Host 'Checking if the tenant is licensed for Teams:'
+$parsedTenantAssignedPlans = Get-TenantAssignedPlans $tenantAssignedPlans
+if ($parsedTenantAssignedPlans -contains 'Teams') {
+  Write-Host -ForegroundColor Green 'The tenant is licensed for Teams.'
+} else {
+  return Write-Host -ForegroundColor Red 'The tenant is not licensed for Teams.'
+}
+
+
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 # USER VALIDATION
 $user = (Get-MsolUser -UserPrincipalName $UPN)
 
@@ -236,6 +283,17 @@ if ($tmsUser.Enabled) {
   Write-Host -ForegroundColor Green 'The user is SIP enabled.'
 } else {
   return Write-Host -ForegroundColor Red 'The user is not SIP enabled.'
+}
+
+# SIP Domain (not fully tested)
+$userDomain = Get-UserSipDomain $UPN
+$sipDomain = (Get-CsOnlineSipDomain -Domain $userDomain)
+
+Write-Host 'Checking if the user domain is SIP enabled:'
+if ($sipDomain.Status -eq 'Enabled') {
+  Write-Host -ForegroundColor Green 'The user domain is SIP enabled.'
+} else {
+  return Write-Host -ForegroundColor Red 'The user domain is not SIP enabled.'
 }
 
 Write-Host 'Checking if the user has any MCOValidationError:'
