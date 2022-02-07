@@ -7,15 +7,15 @@
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 # AUTHOR: Mihai Filip
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
-# DEPENDENCIES: Connect-MsolService, Connect-ExchangeOnline
+# DEPENDENCIES: Connect-MsolService, Connect-ExchangeOnline, Connect-MicrosoftTeams
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 # USAGE: 
 # Connect-MsolService
 # Connect-ExchangeOnline
 # Connect-MicrosoftTeams
-# .\tms-TeamsCalendar.ps1 user@domain.com
+# .\tms-MissingCalendar.ps1 user@domain.com
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
-# Back it up with https://aka.ms/TeamsCalendarDiag
+# Back it up with https://aka.ms/TeamsCalendarDiag; https://exrca.com/ 
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 
 [CmdletBinding()]
@@ -101,6 +101,7 @@ function Get-IsAppInUserAppSetupPolicy {
 
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 # USER & LICENSES
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.
 $user = Get-MsolUser -UserPrincipalName $UPN
 
 Write-Host 'Checking if the user exists:'
@@ -121,14 +122,14 @@ if ($userLicense.isLicensed) {
 
 Write-Host 'Checking user licenses:'
 
-# CHECK TEAMS (TEAMS1)
+# TEAMS (TEAMS1)
 if ($userLicense.ServicePlans -contains 'TEAMS1') {
   Write-Host -ForegroundColor Green 'The user is licensed for Teams.'
 } else {
   return Write-Host -ForegroundColor Red 'The user is not licensed for Teams.'
 }
 
-# CHECK SfBO (MCOSTANDARD, MCO_TEAMS_IW)
+# SfBO (MCOSTANDARD, MCO_TEAMS_IW)
 if ($userLicense.ServicePlans -contains 'MCOSTANDARD' -OR $userLicense.ServicePlans -contains 'MCO_TEAMS_IW' ) {
   Write-Host -ForegroundColor Green 'The user is licensed for Skype for Business Online.'
 } else {
@@ -137,7 +138,7 @@ if ($userLicense.ServicePlans -contains 'MCOSTANDARD' -OR $userLicense.ServicePl
   Write-Host -ForegroundColor Red 'The user is not licensed for Skype for Business Online.'
 }
 
-# CHECK EXO (EXCHANGE_S_STANDARD, EXCHANGE_S_ENTERPRISE) 
+# EXO (EXCHANGE_S_STANDARD, EXCHANGE_S_ENTERPRISE) 
 if ($userLicense.ServicePlans -contains 'EXCHANGE_S_STANDARD' -OR $userLicense.ServicePlans -contains 'EXCHANGE_S_ENTERPRISE') {
   Write-Host -ForegroundColor Green 'The user is licensed for Exchange Online.'
 } else {
@@ -146,6 +147,7 @@ if ($userLicense.ServicePlans -contains 'EXCHANGE_S_STANDARD' -OR $userLicense.S
 
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 # COEXISTENCE
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.
 $coexistenceMode = (Get-CsOnlineUser $UPN).TeamsUpgradeEffectiveMode
 
 Write-Host 'Checking the coexistence mode of the user:'
@@ -157,6 +159,7 @@ if ($coexistenceMode -eq 'SfBOnly' -OR $coexistenceMode -eq 'SfBWithTeamsCollab'
 
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 # APP SETUP POLICY
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.
 $calendarId = 'ef56c0de-36fc-4ef8-b417-3d82ba9d073c'
 $appInPolicy = Get-IsAppInUserAppSetupPolicy $UPN $calendarId
 Write-Host 'Checking if the app setup policy of the user includes Calendar:'
@@ -169,6 +172,7 @@ if ($appInPolicy) {
 
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 # EXCHANGE HOMING
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.
 $recipientType = (Get-Mailbox -Identity $UPN).RecipientTypeDetails
 Write-Host 'Checking the Exchange homing of the user:'
 
@@ -181,6 +185,7 @@ if ($recipientType -eq 'UserMailbox') {
 
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 # EWS SETTINGS
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.
 
 # TENANT EWS
 $tenantEwsEnabled = (Get-OrganizationConfig).EwsEnabled
@@ -260,6 +265,9 @@ if ($userEwsApplicationAccessPolicy -eq $null) {
   }
 }
 
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.
+# TRANSCRIPT
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.
 $issuePersists = Read-Host 'No issues found. Does the problem persist? [Y/N]'
 if ($issuePersists -eq 'Y') {
   $desktopPath = [Environment]::GetFolderPath("Desktop")
