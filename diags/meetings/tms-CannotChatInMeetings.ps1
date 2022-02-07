@@ -1,4 +1,20 @@
-# requires Connect-MicrosoftTeams, Connect-MsolService
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
+# THIS CODE AND ANY ASSOCIATED INFORMATION ARE PROVIDED “AS IS” WITHOUT
+# WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+# LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS
+# FOR A PARTICULAR PURPOSE. THE ENTIRE RISK OF USE, INABILITY TO USE, OR 
+# RESULTS FROM THE USE OF THIS CODE REMAINS WITH THE USER.
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
+# AUTHOR: Mihai Filip
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
+# DEPENDENCIES: Connect-MsolService, Connect-MicrosoftTeams
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
+# USAGE: 
+# Connect-MsolService
+# Connect-MicrosoftTeams
+# cd PATH_TO_SCRIPT
+# .\tms-CannotChatInMeetings.ps1 user@domain.com
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 
 [CmdletBinding()]
 Param (
@@ -58,9 +74,9 @@ function Get-OfficeUserLicense {
   return $licenses
 }
 
-
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
-# Tenant existence
+# TENANT
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 $tenant = (Get-CsTenant)
 
 Write-Host 'Checking if the tenant exists:'
@@ -70,7 +86,7 @@ if ($tenant) {
   return Write-Host -ForegroundColor Red 'The tenant does not exist.'
 }
 
-# Tenant Teams plan
+# TENANT TEAMS PLAN
 $tenantAssignedPlans = (Get-CsTenant).AssignedPlan
 
 Write-Host 'Checking if the tenant is licensed for Teams:'
@@ -81,7 +97,9 @@ if ($parsedTenantAssignedPlans -contains 'Teams') {
   return Write-Host -ForegroundColor Red 'The tenant is not licensed for Teams.'
 }
 
-# User 
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
+# USER 
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 $user = (Get-MsolUser -UserPrincipalName $UPN)
 
 Write-Host 'Checking if the user exists:'
@@ -91,7 +109,7 @@ if ($user) {
   return Write-Host -ForegroundColor Red 'The user does not exist.'
 }
 
-# User licenses
+# USER LICENSES
 $userLicense = Get-OfficeUserLicense $UPN
 
 Write-Host 'Checking if the user is licensed:'
@@ -103,21 +121,21 @@ if ($userLicense.isLicensed) {
 
 Write-Host 'Checking user licenses:'
 
-# CHECK TEAMS (TEAMS1)
+# TEAMS1
 if ($userLicense.ServicePlans -contains 'TEAMS1') {
   Write-Host -ForegroundColor Green 'The user is licensed for Teams.'
 } else {
   return Write-Host -ForegroundColor Red 'The user is not licensed for Teams.'
 }
 
-# CHECK SfBO (MCOSTANDARD, MCO_TEAMS_IW)
+# MCOSTANDARD
 if ($userLicense.ServicePlans -contains 'MCOSTANDARD' -OR $userLicense.ServicePlans -contains 'MCO_TEAMS_IW' ) {
   Write-Host -ForegroundColor Green 'The user is licensed for Skype for Business Online.'
 } else {
   return Write-Host -ForegroundColor Red 'The user is not licensed for Skype for Business Online.'
 }
 
-# check if Sip enabled
+# SIP ENABLED
 $tmsUser = (Get-CsOnlineUser $UPN)
 
 Write-Host 'Checking if the user is SIP enabled:'
@@ -128,7 +146,8 @@ if ($tmsUser.Enabled) {
 }
 
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
-# Meeting policy settings
+# MEETING POLICY
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 $policyName = $tmsUser.TeamsMeetingPolicy
 
 if ($policyName -eq $null) {
@@ -150,6 +169,9 @@ if ($meetingPolicy.MeetingChatEnabledType -eq 'Enabled') {
   }
 }
 
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
+# TRANSCRIPT
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 $issuePersists = Read-Host 'No issues found. Does the problem persist? [Y/N]'
 if ($issuePersists -eq 'Y') {
   $desktopPath = [Environment]::GetFolderPath("Desktop")
