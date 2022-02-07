@@ -40,7 +40,7 @@ function New-ProfileScript {
   $path = "$($HOME)\Documents\WindowsPowerShell"
   $name = "tms-CustomProfiles.ps1"
 
-  $url = "https://raw.githubusercontent.com/voidthevillain/tms-scripts/main/util/profiles/tms-CustomProfiles.ps1"
+  $url = "https://raw.githubusercontent.com/voidthevillain/tms-diags/main/util/custom-profiles/tms-CustomProfiles.ps1"
 
   try {
     (curl $url).Content | Out-File -FilePath "$($path)\$($name)"
