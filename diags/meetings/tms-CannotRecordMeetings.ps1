@@ -15,6 +15,9 @@
 # cd PATH_TO_SCRIPT
 # .\tms-CannotRecordMeetings.ps1 user@domain.com
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
+# Back it up with https://aka.ms/MeetingRecordingDiag
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 
 [CmdletBinding()]
 Param (
