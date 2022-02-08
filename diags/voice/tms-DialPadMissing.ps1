@@ -15,7 +15,6 @@
 # cd PATH_TO_SCRIPT
 # .\tms-DialPadMissing.ps1 user@domain.com
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
-# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 # Back it up with https://aka.ms/TeamsDialPadMissingDiag
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 
@@ -176,7 +175,7 @@ Write-Host 'Checking if the user is a Calling Plan or Direct Routing user:'
 if ($PSTNType -eq 'Online') {
   $isCP = $true
   Write-Host 'The user is a Calling Plan user.'
-} elseif ($PSTNType -eq 'OnPremises') { # to check the value for DR user
+} elseif ($PSTNType -eq 'OnPremises') { 
   $isDR = $true
   Write-Host 'The user is a Direct Routing user.'
 }
