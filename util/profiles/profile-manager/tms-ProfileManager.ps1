@@ -89,7 +89,6 @@ Function Get-CustomProfiles {
   return $profiles
 }
 
-# $xamlFile = "C:\Users\voidt\source\repos\Teams - Profile Manager\Teams - Profile Manager\MainWindow.xaml"
 $xamlFile = "C:\Users\voidt\Desktop\MainWindow.xaml"
 
 #create window
@@ -148,7 +147,6 @@ $var_btnClearCache.Add_Click({
   write-host 'Cache cleared successfully.'
 })
 
-
 $var_btnOpenLocation.Add_Click({
   Invoke-Item "$($env:localappdata)\Microsoft\Teams\CustomProfiles\$($var_txtSelectedProfile.Text)"
 })
@@ -161,29 +159,5 @@ $var_btnCreate.Add_Click({
 
   PowerShell.exe -File $scriptPath $profileName
 })
-
-
-# BAD idea cause permission errors
-# $var_btnDelete.Add_Click({
-#   $pathToProfile = "$($env:localappdata)\Microsoft\Teams\CustomProfiles\$($var_txtSelectedProfile.Text)"
-
-#   try { 
-#     Remove-Item $pathToProfile -Recurse -Force
-#   } catch {
-#     Write-Host -ForegroundColor Red 'Missing permissions to fully delete this profile.'
-#   }
-#   Write-Host 'Deleted profile'
-
-#   $var_listProfiles.Items.RemoveAt($var_listProfiles.SelectedIndex)
-# })
-
-
-
-# $var_btnLaunch.Add_Click({
-#   # $scriptPath = "$($HOME)\Documents\WindowsPowerShell\tms-CustomProfiles.ps1"
-  
-#   # PowerShell.exe -File $scriptPath $selectedProfile
-#   write-host $selectedProfile
-# })
 
 $Null = $window.ShowDialog()
