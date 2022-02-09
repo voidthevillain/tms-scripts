@@ -1,24 +1,46 @@
 Add-Type -AssemblyName PresentationFramework
 
-# Function Get-MainWindow {
-#   $path = "$($HOME)\Documents\WindowsPowerShell"
-#   $exists = $false
+Function Get-MainWindow {
+  $path = "$($HOME)\Documents\WindowsPowerShell"
+  $exists = $false
 
-#   gci -path $path | foreach {
-#     if ($_.Name -eq 'MainWindow.xaml') {
-#       $exists = $true
-#     } 
-#   }
+  gci -path $path | foreach {
+    if ($_.Name -eq 'MainWindow.xaml') {
+      $exists = $true
+    } 
+  }
 
-#   return $exists
-# }
+  return $exists
+}
 
-# Function New-MainWindow {
-#   $path = "$($HOME)\Documents\WindowsPowerShell"
-#   $name = "MainWindow.xaml"
+Function New-MainWindow {
+  $path = "$($HOME)\Documents\WindowsPowerShell"
+  $name = "MainWindow.xaml"
 
+  $url = "https://raw.githubusercontent.com/voidthevillain/tms-scripts/main/util/profiles/profile-manager/MainWindow.xaml"
 
-# }
+  try {
+    (curl $url).Content | Out-File -FilePath "$($path)\$($name)"
+    return $true
+  } catch {
+    return $false
+  }
+}
+
+Write-Host 'Checking if main window:'
+$mainWindow = Get-MainWindow
+
+if ($mainWindow) {
+  Write-Host -ForegroundColor Green "Main window exists in $($HOME)\Documents\WindowsPowerShell."
+} else {
+  Write-Host 'Main window does not exist. Downloading from https://raw.githubusercontent.com/voidthevillain/tms-scripts/main/util/profiles/profile-manager/MainWindow.xaml'
+  $isCreated = New-MainWindow
+  if ($isCreated) {
+    Write-Host -ForegroundColor Green "Successfully downloaded and installed main window in $($HOME)\Documents\WindowsPowerShell."
+  } else {
+    return Write-Host -ForegroundColor Red "Could not download or install main window from https://raw.githubusercontent.com/voidthevillain/tms-scripts/main/util/profiles/profile-manager/MainWindow.xaml"
+  }
+}
 
 Function Get-ProfileScript {
   $path = "$($HOME)\Documents\WindowsPowerShell"
