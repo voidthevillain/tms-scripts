@@ -46,6 +46,27 @@ if ($profileScript) {
   }
 }
 
+Function Get-TeamsIcon {
+  $path = "$($HOME)\Documents\WindowsPowerShell"
+  $exists = $false
+
+  gci -path $path | foreach {
+    if ($_.Name -eq 'teams.ico') {
+      $exists = $true
+    } 
+  }
+
+  return $exists
+}
+
+$tmsIcon = Get-TeamsIcon
+
+if ($tmsIcon) {
+  Write-Host -ForegroundColor Green "Icon exists $($HOME)\Documents\WindowsPowerShell."
+} else {
+  Write-Host 'Icon does not exist. Downloading icon from https://raw.githubusercontent.com/voidthevillain/tms-scripts/main/util/profiles/profile-manager/bin/teams.ico'
+  curl "https://raw.githubusercontent.com/voidthevillain/tms-scripts/main/util/profiles/profile-manager/bin/teams.ico" -outfile "$($HOME)\Documents\WindowsPowerShell\teams.ico"
+}
 
 <# 
 .NAME
