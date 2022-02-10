@@ -1,47 +1,4 @@
-Add-Type -AssemblyName PresentationFramework
-
-Function Get-MainWindow {
-  $path = "$($HOME)\Documents\WindowsPowerShell"
-  $exists = $false
-
-  gci -path $path | foreach {
-    if ($_.Name -eq 'MainWindow.xaml') {
-      $exists = $true
-    } 
-  }
-
-  return $exists
-}
-
-Function New-MainWindow {
-  $path = "$($HOME)\Documents\WindowsPowerShell"
-  $name = "MainWindow.xaml"
-
-  $url = "https://raw.githubusercontent.com/voidthevillain/tms-scripts/main/util/profiles/profile-manager/MainWindow.xaml"
-
-  try {
-    (curl $url).Content | Out-File -FilePath "$($path)\$($name)"
-    return $true
-  } catch {
-    return $false
-  }
-}
-
-Write-Host 'Checking if main window:'
-$mainWindow = Get-MainWindow
-
-if ($mainWindow) {
-  Write-Host -ForegroundColor Green "Main window exists in $($HOME)\Documents\WindowsPowerShell."
-} else {
-  Write-Host 'Main window does not exist. Downloading from https://raw.githubusercontent.com/voidthevillain/tms-scripts/main/util/profiles/profile-manager/MainWindow.xaml'
-  $isCreated = New-MainWindow
-  if ($isCreated) {
-    Write-Host -ForegroundColor Green "Successfully downloaded and installed main window in $($HOME)\Documents\WindowsPowerShell."
-  } else {
-    return Write-Host -ForegroundColor Red "Could not download or install main window from https://raw.githubusercontent.com/voidthevillain/tms-scripts/main/util/profiles/profile-manager/MainWindow.xaml"
-  }
-}
-
+# Functions
 Function Get-ProfileScript {
   $path = "$($HOME)\Documents\WindowsPowerShell"
   $exists = $false
@@ -69,6 +26,12 @@ Function New-ProfileScript {
   }
 }
 
+Function Get-CustomProfiles {
+  $profiles = gci -path "$($env:localappdata)\Microsoft\Teams\CustomProfiles"
+
+  return $profiles
+}
+
 $profileScript = Get-ProfileScript
 
 if ($profileScript) {
@@ -83,81 +46,170 @@ if ($profileScript) {
   }
 }
 
-Function Get-CustomProfiles {
-  $profiles = gci -path "$($env:localappdata)\Microsoft\Teams\CustomProfiles"
 
-  return $profiles
-}
+<# 
+.NAME
+    PManager
+#>
 
-$xamlFile = "C:\Users\voidt\Desktop\MainWindow.xaml"
+Add-Type -AssemblyName System.Windows.Forms
+[System.Windows.Forms.Application]::EnableVisualStyles()
 
-#create window
-$inputXML = Get-Content $xamlFile -Raw
-$inputXML = $inputXML -replace 'mc:Ignorable="d"', '' -replace "x:N", 'N' -replace '^<Win.*', '<Window'
-[XML]$XAML = $inputXML
+$TMSProfileManager               = New-Object system.Windows.Forms.Form
+$TMSProfileManager.ClientSize    = New-Object System.Drawing.Point(679,355)
+$TMSProfileManager.text          = "TEAMS - Profile Manager"
+$TMSProfileManager.TopMost       = $false
+$TMSProfileManager.icon          = "$($HOME)\Documents\WindowsPowerShell\teams.ico"
+$TMSProfileManager.BackColor     = [System.Drawing.ColorTranslator]::FromHtml("#ffffff")
+$TMSProfileManager.FormBorderStyle    = 'Fixed3D'
+$TMSProfileManager.MaximizeBox        = $false
+$TMSProfileManager.MinimizeBox        = $false
 
-#Read XAML
-$reader = (New-Object System.Xml.XmlNodeReader $xaml)
-try {
-    $window = [Windows.Markup.XamlReader]::Load( $reader )
-} catch {
-    Write-Warning $_.Exception
-    throw
-}
+$Label1                          = New-Object system.Windows.Forms.Label
+$Label1.text                     = "Profiles:"
+$Label1.AutoSize                 = $true
+$Label1.width                    = 25
+$Label1.height                   = 10
+$Label1.location                 = New-Object System.Drawing.Point(10,10)
+$Label1.Font                     = New-Object System.Drawing.Font('Segoe UI',10)
 
-# Create variables based on form control names.
-# Variable will be named as 'var_<control name>'
+$listProfiles                    = New-Object system.Windows.Forms.ListBox
+$listProfiles.text               = "listBox"
+$listProfiles.width              = 659
+$listProfiles.height             = 200
+$listProfiles.location           = New-Object System.Drawing.Point(10,35)
 
-$xaml.SelectNodes("//*[@Name]") | ForEach-Object {
-    #"trying item $($_.Name)"
-    try {
-        Set-Variable -Name "var_$($_.Name)" -Value $window.FindName($_.Name) -ErrorAction Stop
-    } catch {
-        throw
-    }
-}
-Get-Variable var_*
+$Label2                          = New-Object system.Windows.Forms.Label
+$Label2.text                     = "Selected: "
+$Label2.AutoSize                 = $true
+$Label2.width                    = 25
+$Label2.height                   = 10
+$Label2.location                 = New-Object System.Drawing.Point(10,255)
+$Label2.Font                     = New-Object System.Drawing.Font('Segoe UI',10)
+
+$lblSelectedProfile              = New-Object system.Windows.Forms.Label
+$lblSelectedProfile.text         = "(no profile selected)"
+$lblSelectedProfile.AutoSize     = $true
+$lblSelectedProfile.width        = 25
+$lblSelectedProfile.height       = 10
+$lblSelectedProfile.location     = New-Object System.Drawing.Point(80,255)
+$lblSelectedProfile.Font         = New-Object System.Drawing.Font('Segoe UI',10,[System.Drawing.FontStyle]([System.Drawing.FontStyle]::Bold))
+
+$btnStart                        = New-Object system.Windows.Forms.Button
+$btnStart.text                   = "Start"
+$btnStart.width                  = 100
+$btnStart.height                 = 30
+$btnStart.location               = New-Object System.Drawing.Point(346,250)
+$btnStart.Font                   = New-Object System.Drawing.Font('Segoe UI',10)
+
+$btnCache                        = New-Object system.Windows.Forms.Button
+$btnCache.text                   = "Cache"
+$btnCache.width                  = 100
+$btnCache.height                 = 30
+$btnCache.location               = New-Object System.Drawing.Point(459,250)
+$btnCache.Font                   = New-Object System.Drawing.Font('Segoe UI',10)
+
+$btnLocation                     = New-Object system.Windows.Forms.Button
+$btnLocation.text                = "Location"
+$btnLocation.width               = 100
+$btnLocation.height              = 30
+$btnLocation.location            = New-Object System.Drawing.Point(569,250)
+$btnLocation.Font                = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
+
+$Label3                          = New-Object system.Windows.Forms.Label
+$Label3.text                     = "New profile:"
+$Label3.AutoSize                 = $true
+$Label3.width                    = 25
+$Label3.height                   = 10
+$Label3.location                 = New-Object System.Drawing.Point(10,325)
+$Label3.Font                     = New-Object System.Drawing.Font('Segoe UI',10)
+
+$txtNewProfile                   = New-Object system.Windows.Forms.TextBox
+$txtNewProfile.multiline         = $false
+$txtNewProfile.width             = 151
+$txtNewProfile.height            = 20
+$txtNewProfile.location          = New-Object System.Drawing.Point(94,320)
+$txtNewProfile.Font              = New-Object System.Drawing.Font('Segoe UI',10)
+
+$btnCreate                       = New-Object system.Windows.Forms.Button
+$btnCreate.text                  = "Create"
+$btnCreate.width                 = 100
+$btnCreate.height                = 30
+$btnCreate.location              = New-Object System.Drawing.Point(569,316)
+$btnCreate.Font                  = New-Object System.Drawing.Font('Segoe UI',10)
+
+$txtProfileName                  = New-Object system.Windows.Forms.TextBox
+$txtProfileName.multiline        = $false
+$txtProfileName.width            = 100
+$txtProfileName.height           = 20
+$txtProfileName.visible          = $false
+$txtProfileName.location         = New-Object System.Drawing.Point(316,320)
+$txtProfileName.Font             = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
+
 
 $customProfiles = Get-CustomProfiles
 
 if ($customProfiles) {
   foreach ($cp in $customProfiles) {
-    $var_listProfiles.Items.Add($cp.Name)
+    $listProfiles.Items.Add($cp.Name)
   }
 } else {
-  $var_listProfiles.Items.Add("No custom profiles found.")
+  $listProfiles.Items.Add("No custom profiles found.")
 }
 
-$var_listProfiles.Add_SelectionChanged({
-  $var_txtSelectedProfile.Text = $var_listProfiles.selectedItems
-  $var_lblSelectedProfile.Content = $var_txtSelectedProfile.Text
+$listProfiles.Add_SelectedIndexChanged({
+  $txtProfileName.text = $listProfiles.selectedItems
+  $lblSelectedProfile.text = $txtProfileName.text
 })
 
-$var_btnStart.Add_Click({
+$btnStart.Add_Click({
   $scriptPath = "$($HOME)\Documents\WindowsPowerShell\tms-CustomProfiles.ps1"
 
-  PowerShell.exe -File $scriptPath $var_txtSelectedProfile.Text
+  if ($txtProfileName.Text -eq "") {
+    Write-Host 'No profile selected to start.'
+  } else {
+    Write-Host 'Starting profile.'
+    PowerShell.exe -File $scriptPath $txtProfileName.Text
+  } 
 })
 
-$var_btnClearCache.Add_Click({
-  $path = "$($env:localappdata)\Microsoft\Teams\CustomProfiles\$($var_txtSelectedProfile.Text)\AppData\Roaming\Microsoft\Teams"
+$btnCache.Add_Click({
+  $path = "$($env:localappdata)\Microsoft\Teams\CustomProfiles\$($txtProfileName.Text)\AppData\Roaming\Microsoft\Teams"
 
-  gci -path $path | foreach { Remove-Item $_.FullName -Recurse -Force }
-
-  write-host 'Cache cleared successfully.'
+  if ($txtProfileName.Text -eq "") {
+    Write-Host 'No profile selected to clear cache.'
+  } else {
+    gci -path $path | foreach { Remove-Item $_.FullName -Recurse -Force }
+    Write-Host 'Cache cleared successfully.'
+  } 
 })
 
-$var_btnOpenLocation.Add_Click({
-  Invoke-Item "$($env:localappdata)\Microsoft\Teams\CustomProfiles\$($var_txtSelectedProfile.Text)"
+$btnLocation.Add_Click({
+  if ($txtProfileName.Text -eq "") {
+    Write-Host 'No profile selected to open location.'
+  } else {
+    Invoke-Item "$($env:localappdata)\Microsoft\Teams\CustomProfiles\$($txtProfileName.Text)"
+    Write-Host 'Location opened successfully.'
+  }
 })
 
-$var_btnCreate.Add_Click({
+$btnCreate.Add_Click({
   $scriptPath = "$($HOME)\Documents\WindowsPowerShell\tms-CustomProfiles.ps1"
-  $profileName = $var_txtNewProfileName.Text
+  $profileName = $txtNewProfile.Text
 
-  $var_listProfiles.Items.Add($profileName)
-
-  PowerShell.exe -File $scriptPath $profileName
+  if ($profileName -eq "") {
+    Write-Host 'No profile name to create profile.'
+  } else {
+    write-host 'New profile created successfully'
+    $listProfiles.Items.Add($profileName)
+    PowerShell.exe -File $scriptPath $profileName
+  }
 })
 
-$Null = $window.ShowDialog()
+$TMSProfileManager.controls.AddRange(@($Label1,$listProfiles,$Label2,$lblSelectedProfile,$btnStart,$btnCache,$btnLocation,$Label3,$txtNewProfile,$btnCreate,$txtProfileName))
+
+#region Logic 
+
+#endregion
+
+[void]$TMSProfileManager.ShowDialog()
