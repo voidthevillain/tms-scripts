@@ -131,7 +131,7 @@ if ($userLicense.ServicePlans -contains 'MCOEV') {
 $tmsUser = (Get-CsOnlineUser $UPN)
 
 Write-Host 'Checking if the user is SIP enabled:'
-if ($tmsUser.Enabled) {
+if ($tmsUser.IsSipEnabled) {
   Write-Host -ForegroundColor Green 'The user is SIP enabled.'
 } else {
   return Write-Host -ForegroundColor Red 'The user is not SIP enabled.'
@@ -335,7 +335,7 @@ if ($teamChannelIds -contains $channelId) {
 }
 
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
-# TEAM & CHANNEL
+# M365 GROUP MEMBERSHIP
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 Write-Host '...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.'
 Write-Host 'M365 GROUP MEMBERSHIP'
@@ -416,3 +416,49 @@ if ($raLineUri) {
 } else {
   return Write-Host -ForegroundColor Red 'The resource account does not have a phone number assigned.'
 }
+
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
+# TRANSCRIPT
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
+$issuePersists = Read-Host 'No issues found. Does the problem persist? [Y/N]'
+if ($issuePersists -eq 'Y') {
+  $desktopPath = [Environment]::GetFolderPath("Desktop")
+  Write-Host '...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.'
+  Write-Host 'Generating transcript:'
+  Start-Transcript -Path "$($desktopPath)\CannotCallOboResourceAccount.txt"
+  Write-Host '...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.'
+  Write-Host 'User:'$UPN
+  Write-Host 'Call queue:'$CQName
+  Write-Host 'OBO resource account:'$OboRA
+  Write-Host 'Team name:'$TeamName
+  Write-Host '...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.'
+  Write-Host "User $($UPN) (TMS):"
+  Get-CsOnlineUser $UPN
+  Write-Host '...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.'
+  Write-Host "User $($UPN) (MSO):"
+  Get-MsolUser -UserPrincipalName $UPN
+  Write-Host '...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.'
+  Write-Host "User licenses (MSO):"
+  Write-Host "Subscriptions:"$userLicense.SKU
+  Write-Host "Service plans:"$userLicense.ServicePlans
+  Write-Host '...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.'
+  Write-Host "Call queue (TMS):"
+  Get-CsCallQueue -NameFilter $CQName
+  Write-Host '...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.'
+  Write-Host "OBO Resource account (TMS):"
+  Get-CsOnlineUser $OboRA
+  Write-Host '...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.'
+  Write-Host "Team (TMS):"
+  $teamTR = Get-Team -DisplayName $TeamName
+  Get-Team -DisplayName $TeamName
+  Write-Host '...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.'
+  Write-Host "Team channels (TMS):"
+  Get-TeamChannel -GroupId $teamTR.GroupId
+  Stop-Transcript
+  Write-Host '...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.'
+  Write-Host 'Please open a support request with the above transcript attached.'
+} else {
+  return
+}
+Write-Host '...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.'
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
