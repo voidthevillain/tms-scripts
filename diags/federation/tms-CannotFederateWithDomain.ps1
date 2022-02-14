@@ -279,7 +279,7 @@ if ($userLicense.ServicePlans -contains 'MCOSTANDARD' -OR $userLicense.ServicePl
 $tmsUser = (Get-CsOnlineUser $UPN)
 
 Write-Host 'Checking if the user is SIP enabled:'
-if ($tmsUser.Enabled) {
+if ($tmsUser.IsSipEnabled) {
   Write-Host -ForegroundColor Green 'The user is SIP enabled.'
 } else {
   return Write-Host -ForegroundColor Red 'The user is not SIP enabled.'
@@ -305,7 +305,7 @@ if (!$tmsUser.MCOValidationError) {
 
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 # USER EXTRNAL ACCESS POLICY
-$policy = $tmsUser.ExternalAccessPolicy
+$policy = $tmsUser.ExternalAccessPolicy.Name
 
 if ($policy -eq $null) {
   $policy = 'Global'
