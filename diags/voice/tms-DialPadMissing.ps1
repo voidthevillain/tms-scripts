@@ -121,7 +121,7 @@ if ($userLicense.ServicePlans -contains 'MCOEV') {
 $tmsUser = (Get-CsOnlineUser $UPN)
 
 Write-Host 'Checking if the user is SIP enabled:'
-if ($tmsUser.Enabled) {
+if ($tmsUser.IsSipEnabled) {
   Write-Host -ForegroundColor Green 'The user is SIP enabled.'
 } else {
   return Write-Host -ForegroundColor Red 'The user is not SIP enabled.'
