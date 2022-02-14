@@ -385,6 +385,10 @@ if ($raLicense.ServicePlans -contains 'MCOEV_VIRTUALUSER') {
 # NUMBER TYPE
 $raLineUri = (Get-CsOnlineUser $OboRA).LineUri
 
+if ($raLineUri[0] -ne '+') {
+  $raLineUri = "+$($raLineUri)"
+}
+
 Write-Host 'Checking if the resource account has a phone number assigned:'
 if ($raLineUri) {
   Write-Host -ForegroundColor Green 'The resource account has a phone number assigned.'
