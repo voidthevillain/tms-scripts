@@ -15,6 +15,9 @@
 # cd PATH_TO_SCRIPT
 # .\tms-CannotRecordP2PCalls.ps1 user@domain.com
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
+# Back it up with https://aka.ms/Teams11CallRecDiag
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 
 [CmdletBinding()]
 Param (
