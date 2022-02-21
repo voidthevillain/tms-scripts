@@ -99,6 +99,20 @@ function Get-IsAppInUserAppSetupPolicy {
   return $false
 }
 
+
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
+# EXCHANGE HOMING
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.
+$recipientType = (Get-Mailbox -Identity $UPN).RecipientTypeDetails
+Write-Host 'Checking the Exchange homing of the user:'
+
+if ($recipientType -eq 'UserMailbox') {
+  Write-Host -ForegroundColor Green 'The mailbox is hosted in Exchange Online.'
+} elseif ($recipientType -eq 'MailUser') {
+  return Write-Host -ForegroundColor Yellow 'The mailbox is hosted in Exchange On-Premises. See https://docs.microsoft.com/en-us/microsoftteams/troubleshoot/exchange-integration/teams-exchange-interaction-issue'
+}
+
+
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 # USER & LICENSES
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.
@@ -169,19 +183,6 @@ if ($appInPolicy) {
 } else {
   return Write-Host -ForegroundColor Red 'The Calendar app is not included in the app setup policy of the user.'
 }
-
-# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
-# EXCHANGE HOMING
-# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.
-$recipientType = (Get-Mailbox -Identity $UPN).RecipientTypeDetails
-Write-Host 'Checking the Exchange homing of the user:'
-
-if ($recipientType -eq 'UserMailbox') {
-  Write-Host -ForegroundColor Green 'The mailbox is hosted in Exchange Online.'
-} elseif ($recipientType -eq 'MailUser') {
-  return Write-Host -ForegroundColor Yellow 'The mailbox is hosted in Exchange On-Premises. See https://docs.microsoft.com/en-us/microsoftteams/troubleshoot/exchange-integration/teams-exchange-interaction-issue'
-}
-
 
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 # EWS SETTINGS
