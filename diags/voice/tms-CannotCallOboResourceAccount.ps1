@@ -16,6 +16,8 @@
 # cd PATH_TO_SCRIPT
 # .\tms-CannotCallOboResourceAccount.ps1 user@domain.com CallQueueName ResourceAccountUPN TeamName
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
+# TODO: if CP RA, check balance
+# 2022-03-15T17:10:08.686Z Inf	callingAgents: slimcore-calling [JS.TsCalling.Electron] ffffffff: CallingStack/CallRegistry/0/Electron[112:ba3ef061-9456-4ee4-ac80-bd39e6df7c12][ce01143a][61a4a81a][2]/CallTelemetry Event failure:, StartCall, , {"code":404,"subCode":580406,"phrase":"Error from CreateUsageRequest:\r\nBalance not found","reason":51
 
 [CmdletBinding()]
 Param (
