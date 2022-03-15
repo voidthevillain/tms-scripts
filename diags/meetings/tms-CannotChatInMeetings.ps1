@@ -148,7 +148,7 @@ if ($tmsUser.IsSipEnabled) {
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 # MEETING POLICY
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
-$policyName = $tmsUser.TeamsMeetingPolicy
+$policyName = $tmsUser.TeamsMeetingPolicy.Name
 
 if ($policyName -eq $null) {
   $policyName = 'Global'
