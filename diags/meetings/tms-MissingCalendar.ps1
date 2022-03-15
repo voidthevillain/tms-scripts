@@ -67,7 +67,7 @@ function Get-AppSetupPolicyName {
     [string]$UserPrincipalName
   )
 
-  $pN = (Get-CsOnlineUser $UserPrincipalName).TeamsAppSetupPolicy
+  $pN = (Get-CsOnlineUser $UserPrincipalName).TeamsAppSetupPolicy.Name
 
    if ($pN -eq $null) {
     $pN = 'Global'
@@ -82,7 +82,7 @@ function Get-IsAppInUserAppSetupPolicy {
     [string]$AppId
   )
 
-  $policyName = (Get-CsOnlineUser $UserPrincipalName).TeamsAppSetupPolicy
+  $policyName = (Get-CsOnlineUser $UserPrincipalName).TeamsAppSetupPolicy.Name
 
   if ($policyName -eq $null) {
     $policyName = 'Global'
