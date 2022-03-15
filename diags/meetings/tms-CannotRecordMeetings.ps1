@@ -57,7 +57,7 @@ if ($user) {
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 # POLICY
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
-$policyName = (Get-CsOnlineUser $UPN).TeamsMeetingPolicy
+$policyName = (Get-CsOnlineUser $UPN).TeamsMeetingPolicy.Name
 
 if (!$policyName)
 {
