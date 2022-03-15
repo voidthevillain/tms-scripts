@@ -151,7 +151,7 @@ if ($tmsUser.EnterpriseVoiceEnabled -eq $true) {
   return Write-Host -ForegroundColor Red 'The user is not Enterprise Voice enabled.'
 }
 
-$callingPolicyName = $tmsUser.TeamsCallingPolicy
+$callingPolicyName = $tmsUser.TeamsCallingPolicy.Name
 
 if ($callingPolicyName -eq $null) {
   $callingPolicyName = 'Global'
@@ -167,7 +167,8 @@ if ($callingPolicy.AllowPrivateCalling) {
 }
 
 $voiceUser = (Get-CsOnlineVoiceUser -Identity $UPN)
-$PSTNType = ($voiceUser.PSTNConnectivity.Value | Out-String).trim()
+$PSTNType = ($voiceUser.PSTNConnectivity | Out-String).trim()
+
 $isCP = $false
 $isDR = $false
 
@@ -192,12 +193,12 @@ if ($isCP) {
 
     $voicePolicy = $tmsUser.VoicePolicy
 
-    Write-Host "Checking if the user's voice policy is set to BusinessVoice:"
-    if ($voicePolicy -eq 'BusinessVoice') {
-      Write-Host -ForegroundColor Green "The user's voice policy is set to BusinessVoice."
-    } else {
-      return Write-Host -ForegroundColor Red "The user's voice policy is not set to BusinessVoice."
-    }
+    # Write-Host "Checking if the user's voice policy is set to BusinessVoice:"
+    # if ($voicePolicy -eq 'BusinessVoice') {
+    #   Write-Host -ForegroundColor Green "The user's voice policy is set to BusinessVoice."
+    # } else {
+    #   return Write-Host -ForegroundColor Red "The user's voice policy is not set to BusinessVoice."
+    # }
   } else {
     return Write-Host -ForegroundColor Red 'The user does not have a phone number assigned.'
   }
@@ -215,14 +216,14 @@ if ($isDR) {
 
     $voicePolicy = $tmsUser.VoicePolicy
 
-    Write-Host "Checking if the user's voice policy is set to HybridVoice:"
-    if ($voicePolicy -eq 'HybridVoice') {
-      Write-Host -ForegroundColor Green "The user's voice policy is set to HybridVoice."
-    } else {
-      return Write-Host -ForegroundColor Red "The user's voice policy is not set to HybridVoice."
-    }
+    # Write-Host "Checking if the user's voice policy is set to HybridVoice:"
+    # if ($voicePolicy -eq 'HybridVoice') {
+    #   Write-Host -ForegroundColor Green "The user's voice policy is set to HybridVoice."
+    # } else {
+    #   return Write-Host -ForegroundColor Red "The user's voice policy is not set to HybridVoice."
+    # }
 
-    $voiceRoutingPolicy = $tmsUser.OnlineVoiceRoutingPolicy
+    $voiceRoutingPolicy = $tmsUser.OnlineVoiceRoutingPolicy.Name
 
     if ($voiceRoutingPolicy -eq $null) {
       $voiceRoutingPolicy = 'Global'
