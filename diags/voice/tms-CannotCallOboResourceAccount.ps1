@@ -164,7 +164,7 @@ if ($tmsUser.EnterpriseVoiceEnabled -eq $true) {
   return Write-Host -ForegroundColor Red 'The user is not Enterprise Voice enabled.'
 }
 
-$callingPolicyName = $tmsUser.TeamsCallingPolicy
+$callingPolicyName = $tmsUser.TeamsCallingPolicy.Name
 
 if ($callingPolicyName -eq $null) {
   $callingPolicyName = 'Global'
