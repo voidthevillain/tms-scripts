@@ -182,7 +182,7 @@ if ($callingPolicy.AllowPrivateCalling) {
 }
 
 $voiceUser = (Get-CsOnlineVoiceUser -Identity $UPN)
-$PSTNType = ($voiceUser.PSTNConnectivity.Value | Out-String).trim()
+$PSTNType = ($voiceUser.PSTNConnectivity | Out-String).trim()
 $isCP = $false
 $isDR = $false
 
@@ -210,12 +210,12 @@ if ($isCP) {
 
     $voicePolicy = $tmsUser.VoicePolicy
 
-    Write-Host "Checking if the user's voice policy is set to BusinessVoice:"
-    if ($voicePolicy -eq 'BusinessVoice') {
-      Write-Host -ForegroundColor Green "The user's voice policy is set to BusinessVoice."
-    } else {
-      return Write-Host -ForegroundColor Red "The user's voice policy is not set to BusinessVoice."
-    }
+    # Write-Host "Checking if the user's voice policy is set to BusinessVoice:"
+    # if ($voicePolicy -eq 'BusinessVoice') {
+    #   Write-Host -ForegroundColor Green "The user's voice policy is set to BusinessVoice."
+    # } else {
+    #   return Write-Host -ForegroundColor Red "The user's voice policy is not set to BusinessVoice."
+    # }
   } else {
     return Write-Host -ForegroundColor Red 'The user does not have a phone number assigned.'
   }
@@ -236,12 +236,12 @@ if ($isDR) {
 
     $voicePolicy = $tmsUser.VoicePolicy
 
-    Write-Host "Checking if the user's voice policy is set to HybridVoice:"
-    if ($voicePolicy -eq 'HybridVoice') {
-      Write-Host -ForegroundColor Green "The user's voice policy is set to HybridVoice."
-    } else {
-      return Write-Host -ForegroundColor Red "The user's voice policy is not set to HybridVoice."
-    }
+    # Write-Host "Checking if the user's voice policy is set to HybridVoice:"
+    # if ($voicePolicy -eq 'HybridVoice') {
+    #   Write-Host -ForegroundColor Green "The user's voice policy is set to HybridVoice."
+    # } else {
+    #   return Write-Host -ForegroundColor Red "The user's voice policy is not set to HybridVoice."
+    # }
 
     $voiceRoutingPolicy = $tmsUser.OnlineVoiceRoutingPolicy
 
@@ -387,9 +387,9 @@ if ($raLicense.ServicePlans -contains 'MCOEV_VIRTUALUSER') {
 # NUMBER TYPE
 $raLineUri = (Get-CsOnlineUser $OboRA).LineUri
 
-if ($raLineUri[0] -ne '+') {
-  $raLineUri = "+$($raLineUri)"
-}
+# if ($raLineUri[0] -ne '+') {
+#   $raLineUri = "+$($raLineUri)"
+# }
 
 Write-Host 'Checking if the resource account has a phone number assigned:'
 if ($raLineUri) {
@@ -400,6 +400,13 @@ if ($raLineUri) {
   $isOnline = (Get-CsOnlineTelephoneNumber -TelephoneNumber $raLineUriTrimmed)
   if ($isOnline) {
     Write-Host 'The phone number is an Online (Microsoft) number.'
+
+    Write-Host 'Checking if the resource account is licensed for outbound calls:'
+    if ($raLicense.ServicePlans -contains 'MCOPSTN1' -OR $raLicense.ServicePlans -contains 'MCOPSTN2' -OR $raLicense.ServicePlans -contains 'MCOPSTN5' -OR $raLicense.ServicePlans -contains 'MCOPSTN6' -OR $raLicense.ServicePlans -contains 'MCOPSTN8' -OR $raLicense.ServicePlans -contains 'MCOPSTN9') {
+      Write-Host -ForegroundColor Green 'The resource account is licensed to make outbound calls.'
+    } else {
+      return Write-Host -ForegroundColor Red 'The resource account is not licensed to make outbound calls.'
+    }
   } else {
     Write-Host 'The phone number is an On-Premises (Direct Routing) number.'
 
