@@ -13,7 +13,7 @@
 # Connect-MsolService
 # Connect-ExchangeOnline
 # Connect-MicrosoftTeams
-# .\tms-MissingOutlookAddIn user@domain.com
+# .\tms-MissingOWATeamsAddIn user@domain.com
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 # Back it up with https://aka.ms/TeamsAdd-inDiag
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
