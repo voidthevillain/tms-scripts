@@ -16,8 +16,6 @@
 # cd PATH_TO_SCRIPT
 # .\tms-CannotCallOboResourceAccount.ps1 user@domain.com CallQueueName ResourceAccountUPN TeamName
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
-# TODO: if CP RA, check balance
-# 2022-03-15T17:10:08.686Z Inf	callingAgents: slimcore-calling [JS.TsCalling.Electron] ffffffff: CallingStack/CallRegistry/0/Electron[112:ba3ef061-9456-4ee4-ac80-bd39e6df7c12][ce01143a][61a4a81a][2]/CallTelemetry Event failure:, StartCall, , {"code":404,"subCode":580406,"phrase":"Error from CreateUsageRequest:\r\nBalance not found","reason":51
 
 [CmdletBinding()]
 Param (
@@ -207,15 +205,6 @@ if ($isCP) {
   Write-Host 'Checking if the user has a phone number assigned:'
   if ($lineUri) {
     Write-Host -ForegroundColor Green 'The user has a phone number assigned.'
-
-    $voicePolicy = $tmsUser.VoicePolicy
-
-    # Write-Host "Checking if the user's voice policy is set to BusinessVoice:"
-    # if ($voicePolicy -eq 'BusinessVoice') {
-    #   Write-Host -ForegroundColor Green "The user's voice policy is set to BusinessVoice."
-    # } else {
-    #   return Write-Host -ForegroundColor Red "The user's voice policy is not set to BusinessVoice."
-    # }
   } else {
     return Write-Host -ForegroundColor Red 'The user does not have a phone number assigned.'
   }
@@ -233,15 +222,6 @@ if ($isDR) {
   Write-Host 'Checking if the user has a phone number assigned:'
   if ($lineUri) {
     Write-Host -ForegroundColor Green 'The user has a phone number assigned.'
-
-    $voicePolicy = $tmsUser.VoicePolicy
-
-    # Write-Host "Checking if the user's voice policy is set to HybridVoice:"
-    # if ($voicePolicy -eq 'HybridVoice') {
-    #   Write-Host -ForegroundColor Green "The user's voice policy is set to HybridVoice."
-    # } else {
-    #   return Write-Host -ForegroundColor Red "The user's voice policy is not set to HybridVoice."
-    # }
 
     $voiceRoutingPolicy = $tmsUser.OnlineVoiceRoutingPolicy
 
@@ -343,9 +323,8 @@ Write-Host '...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.'
 Write-Host 'M365 GROUP MEMBERSHIP'
 Write-Host '...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -.'
 # If no proper membership (I.e. added as Owner in AC):
-# diagnosticsCode: {"callControllerCode":403,"callControllerSubCode":10105,"phrase":"On-behalf-of authorization failed.","resultCategories":["UnexpectedClientError"]}
 $groupMembers = (Get-AzureADGroupMember -ObjectId $teamId).UserPrincipalName
-# write-host $groupMembers
+
 Write-Host 'Checking if the user has proper M365 group member permissions:'
 if ($groupMembers -contains $UPN) {
   Write-Host -ForegroundColor Green 'The user is properly added as a member to the M365 group.'
@@ -386,10 +365,6 @@ if ($raLicense.ServicePlans -contains 'MCOEV_VIRTUALUSER') {
 
 # NUMBER TYPE
 $raLineUri = (Get-CsOnlineUser $OboRA).LineUri
-
-# if ($raLineUri[0] -ne '+') {
-#   $raLineUri = "+$($raLineUri)"
-# }
 
 Write-Host 'Checking if the resource account has a phone number assigned:'
 if ($raLineUri) {
