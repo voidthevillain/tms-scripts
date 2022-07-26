@@ -7,6 +7,14 @@
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 # AUTHOR: Mihai Filip
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
+# USAGE: 
+# cd PATH_TO_SCRIPT
+# Connect-MicrosoftTeams
+# Select-MgProfile -Name "beta"
+# Connect-MgGraph -Scopes "User.Read.All","Group.ReadWrite.All", "Presence.Read", "Presence.Read.All"
+# Import-Module Microsoft.Graph.CloudCommunications
+# .\tms-WhoIsManuallyOffline.ps1
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 
 # get a list of users that have Teams
 $users = get-csonlineuser | ? {$_.assignedplan.capability -contains 'Teams'} | select userprincipalname, identity
