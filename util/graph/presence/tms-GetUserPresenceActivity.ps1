@@ -13,7 +13,7 @@
 # Select-MgProfile -Name "beta"
 # Connect-MgGraph -Scopes "User.Read.All","Group.ReadWrite.All", "Presence.Read", "Presence.Read.All"
 # Import-Module Microsoft.Graph.CloudCommunications
-# .\tms-WhoIsManuallyOffline.ps1
+# .\tms-GetUsersPresenceAvailability.ps1
 # ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
 
 # get a list of users that have Teams
