@@ -1,14 +1,17 @@
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
+# THIS CODE AND ANY ASSOCIATED INFORMATION ARE PROVIDED “AS IS” WITHOUT
+# WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT
+# LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS
+# FOR A PARTICULAR PURPOSE. THE ENTIRE RISK OF USE, INABILITY TO USE, OR 
+# RESULTS FROM THE USE OF THIS CODE REMAINS WITH THE USER.
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
+# AUTHOR: Mihai Filip
+# ...- --- .. -.. - .... . ...- .. .-.. .-.. .- .. -. 
+
 # get a list of users that have Teams
 $users = get-csonlineuser | ? {$_.assignedplan.capability -contains 'Teams'} | select userprincipalname, identity
 $usersOffline = @()
 $size = $users.count
-
-# PS C:\Users\a-mihaifilip> Select-MgProfile -Name "beta"
-# PS C:\Users\a-mihaifilip> Connect-MgGraph -Scopes "User.Read.All","Group.ReadWrite.All", "Presence.Read", "Presence.Read.All"
-# Welcome To Microsoft Graph!
-# PS C:\Users\a-mihaifilip> Import-Module Microsoft.Graph.CloudCommunications
-# PS C:\Users\a-mihaifilip> $userId = "578ba82c-d809-4094-992c-37144af98b51"
-# PS C:\Users\a-mihaifilip> Get-MgUserPresence -UserId $userId
 
 # bypass 1500 request x 30s throttle
 if ($size % 1500 -eq 0) {
