@@ -135,7 +135,7 @@ function Get-TenantPSTNSKUs {
 
     # 'MCOPSTN1', 'MCOPSTN2', 'MCOPSTN5', 'MCOPSTN6', 'MCOPSTN8', 'MCOPSTN9'
     foreach ($SKU in $TenantSKUs) {
-        if ($SKU.AccountSkuId.split(':')[1] -eq 'MCOPSTN1' -OR $SKU.AccountSkuId.split(':')[1] -eq 'MCOPSTN2' -OR $SKU.AccountSkuId.split(':')[1] -eq 'MCOPSTN5' -OR $SKU.AccountSkuId.split(':')[1] -eq 'MCOPSTN6' -OR $SKU.AccountSkuId.split(':')[1] -eq 'MCOPSTN8' -OR $SKU.AccountSkuId.split(':')[1] -eq 'MCOPSTN9') {
+        if ($SKU.AccountSkuId.split(':')[1] -eq 'MCOPSTN1' -OR $SKU.AccountSkuId.split(':')[1] -eq 'MCOPSTN2' -OR $SKU.AccountSkuId.split(':')[1] -eq 'MCOPSTN5' -OR $SKU.AccountSkuId.split(':')[1] -eq 'MCOPSTN6' -OR $SKU.AccountSkuId.split(':')[1] -eq 'MCOPSTN8' -OR $SKU.AccountSkuId.split(':')[1] -eq 'MCOPSTN9' -OR $SKU.AccountSkuId.split(':')[1] -eq 'Microsoft_Teams_Calling_Plan_pay_as_you_go_(country_zone_1)') {
             $TenantPSTNSKUs += $SKU
         }
     }
@@ -223,6 +223,7 @@ if (!$userExists) {
             }
 
             # Phone number
+            # NEED SLEEB BEFORE LICENSING AND PHONE NUMBER ASSIGNMENT ~ 1 minute
             $phoneN = Get-CsPhoneNumberAssignment -TelephoneNumber $PhoneNumber
 
             Write-Host "Checking if the phone number is present in the inventory:"
@@ -287,6 +288,7 @@ if (!$userExists) {
             }
 
             # phone number
+            # NEED SLEEB BEFORE LICENSING AND PHONE NUMBER ASSIGNMENT ~ 1 minute
             $phoneN = Get-CsPhoneNumberAssignment -TelephoneNumber $PhoneNumber
 
             Write-Host "Checking if the phone number is present in the inventory:"
